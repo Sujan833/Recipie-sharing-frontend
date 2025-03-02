@@ -162,41 +162,86 @@
 
     </style>
     <script>
-        document.getElementById('recipeForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            const recipeName = document.getElementById('recipe-name').value;
-            const ingredients = document.getElementById('ingredients').value;
-            const instructions = document.getElementById('instructions').value;
-            const recipeImage = document.getElementById('recipe-image').value;
+        document.getElementById('recipeForm').addEventListener('submit', async function(event) {
+       event.preventDefault();
+       
+       const recipeName = document.getElementById('recipe-name').value;
+       const ingredients = document.getElementById('ingredients').value;
+       const instructions = document.getElementById('instructions').value;
+       const recipeImage = document.getElementById('recipe-image').value;
+     
+       if (recipeName && ingredients && instructions && recipeImage) {
+         const messageDiv = document.getElementById('message');
+         messageDiv.textContent = 'Submitting your recipe...';
+         messageDiv.style.color = 'blue';
+     
+         try {
+           const response = await fetch('http://localhost:3000/api/recipes', {
+             method: 'POST',
+             headers: {
+               'Content-Type': 'application/json',
+             },
+             body: JSON.stringify({ name: recipeName, ingredients, instructions, image: recipeImage }),
+           });
+           const data = await response.json();
+     
+           if (response.ok) {
+             messageDiv.textContent = Recipe "${recipeName}" has been submitted successfully!;
+             messageDiv.style.color = 'green';
+             document.getElementById('recipeForm').reset();
+           } else {
+             messageDiv.textContent = data.message || 'There was an issue submitting your recipe.';
+             messageDiv.style.color = 'red';
+           }
+         } catch (error) {
+           messageDiv.textContent = 'Error connecting to the server.';
+           messageDiv.style.color = 'red';
+         }
+       } else {
+         const messageDiv = document.getElementById('message');
+         messageDiv.textContent = 'Please fill in all fields.';
+         messageDiv.style.color = 'red';
+       }
+     });
+     
+        
+     
+     
+     
+               document.getElementById('contactForm').addEventListener('submit', async function(event) {
+       event.preventDefault();
+       
+       const email = document.getElementById('email').value;
+       const message = document.getElementById('message').value;
+     
+       if (email && message) {
+         try {
+           const response = await fetch('http://localhost:5000/api/contact', {
+             method: 'POST',
+             headers: {
+               'Content-Type': 'application/json',
+             },
+             body: JSON.stringify({ email, message }),
+           });
+     
+           const data = await response.json();
+     
+           if (response.ok) {
+             alert(data.message);
+             document.getElementById('contactForm').reset();
+           } else {
+             alert(data.message || 'There was an issue sending your message.');
+           }
+         } catch (error) {
+           alert('Error connecting to the server.');
+         }
+       } else {
+         alert('Please fill in both fields.');
+       }
+     });
+     
+             </script>
 
-            if (recipeName && ingredients && instructions && recipeImage) {
-                const messageDiv = document.getElementById('message');
-                messageDiv.textContent = Recipe "${recipeName}" has been submitted successfully!;
-                messageDiv.style.color = 'green';
-
-                document.getElementById('recipeForm').reset();
-            } else {
-                const messageDiv = document.getElementById('message');
-                messageDiv.textContent = 'Please fill in all fields.';
-                messageDiv.style.color = 'red';
-            }
-        });
-
-        document.getElementById('contactForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const message = document.getElementById('message').value;
-
-            if (email && message) {
-                alert(Thank you for contacting us, ${email}! We'll get back to you shortly.);
-                document.getElementById('contactForm').reset();
-            } else {
-                alert('Please fill in both fields.');
-            }
-        });
-    </script>
 </head>
 <body>
 
@@ -224,13 +269,13 @@
     <section id="recipes" class="recipe-list">
         <h2>Popular Recipes</h2>
         <div class="recipe-card">
-            <img src="./WhatsApp Image 2025-02-23 at 17.41.04_35683223.jpg" alt="Recipe 1">
+            <img src="./WhatsApp Image 2025-02-23 at 17.41.02_6d70cad6.jpg" alt="Recipe 1">
             <h3>Spaghetti Carbonara</h3>
             <p>Delicious and creamy pasta with bacon and eggs.</p>
             <a href="#">View Recipe</a>
         </div>
         <div class="recipe-card">
-            <img src="./WhatsApp Image 2025-02-23 at 17.41.21_78493205.jpg" alt="Recipe 2" width="200px" height="200px">
+            <img src="./WhatsApp Image 2025-02-23 at 17.41.19_e104827e.jpg" alt="Recipe 2" width="200px" height="200px">
             <h3>Chocolate Cake</h3>
             <p>A rich and moist chocolate cake topped with frosting.</p>
             <a href="#">View Recipe</a>
